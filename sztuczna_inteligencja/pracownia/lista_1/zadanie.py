@@ -285,7 +285,8 @@ def main():
     elif len(sys.argv) >= 2 and sys.argv[1] == "--normal":
         batch_mode()
     else:
-        # TODO: Dopisać funkcję, która robi analizę algorytmu z dp i losowego, i z pliku good answer, liczy zgodność i wypisuje statystyki. Nazwa pliku z wzorcową rekonstrukcją nazywa się "good_answer.txt".
+        # TODO: Dopisać funkcję, która robi analizę algorytmu z dp i losowego, i z pliku good answer, liczy zgodność i wypisuje statystyki. Nazwa pliku z wzorcową rekonstrukcją nazywa się "good_answer.txt".  
+        pass
 
 
 
