@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import random
 from functools import lru_cache
 from typing import List, Tuple
