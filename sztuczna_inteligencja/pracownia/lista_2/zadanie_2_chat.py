@@ -260,8 +260,8 @@ class Solver:
         answer = []
 
         MAX_LEN = 150
-        PHASE1_LIMIT = 80
-        BFS_THRESHOLD = 14
+        PHASE1_LIMIT = 130
+        BFS_THRESHOLD = 3
 
         # Spróbuj od razu BFS, jeśli stan jest mały
         if popcount(current) <= BFS_THRESHOLD:
