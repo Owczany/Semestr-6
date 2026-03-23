@@ -1,143 +1,366 @@
-# Win is when positions - goal_positions is empty, meaning all positions are in goal_positions
-# Załóżmy, że niepewność to liczba pozycji, w których może znajdować się weteran
-
-from typing import List, Tuple, Optional, Set
 from collections import deque
-import random
-
-INPUT_FILE = "zad_input.txt"
-OUTPUT_FILE = "zad_output.txt"
-UNCERTAINTY = 4
-
-MOVES = {'R': (0, 1), 'L': (0, -1), 'D': (1, 0), 'U': (-1, 0)}  # Right, Left, Down, Up
-
-def read_input() -> Tuple[Set[Tuple[int, int]], Set[Tuple[int, int]], List[List[int]]]:
-    with open(INPUT_FILE, "r") as f:
-        grid = f.read().splitlines()
-    
-    start_positions = set()
-    goal_positions = set()
-
-    my_grid = []
-    
-    for i in range(len(grid)):
-        my_grid.append([])
-        for j in range(len(grid[i])):
-            my_grid[i].append(0 if grid[i][j] != '#' else 1)
-            if grid[i][j] == 'S':
-                start_positions.add((i, j))
-            elif grid[i][j] == 'G':
-                goal_positions.add((i, j))
-            elif grid[i][j] == 'B':
-                start_positions.add((i, j))
-                goal_positions.add((i, j))
-    
-    return start_positions, goal_positions, my_grid
-
-def write_output(path: str) -> None:
-    with open(OUTPUT_FILE, "w") as f:
-        f.write(path)
-
-def is_valid_move(grid: List[List[int]], position: Tuple[int, int]) -> bool:
-    x, y = position
-    return 0 <= x < len(grid) and 0 <= y < len(grid[0]) and grid[x][y] == 0
-
-def print_grid(grid: List[List[int]], positions: Set[Tuple[int, int]], goal_positions: Set[Tuple[int, int]]) -> None:
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
-            if (i, j) in positions and (i, j) in goal_positions:
-                print('B', end='')  # Both start and goal
-            elif (i, j) in positions:
-                print('S', end='')
-            elif (i, j) in goal_positions:
-                print('G', end='')
-            else:
-                print('#' if grid[i][j] == 1 else ' ', end='')
-        print()
-
-def apply_move(positions: Set[Tuple[int, int]], move: str, grid: List[List[int]]) -> Set[Tuple[int, int]]:
-    new_positions = set()
-    for pos in positions:
-        new_pos = (pos[0] + MOVES[move][0], pos[1] + MOVES[move][1])
-        if is_valid_move(grid, new_pos):
-            new_positions.add(new_pos)
-        else:
-            new_positions.add(pos)
-    return new_positions
-
-def best_move(positions: Set[Tuple[int, int]], grid: List[List[int]]) -> str:
-    best_size = None 
-    best_moves = []
-    for move in MOVES:
-        new_size = len(apply_move(positions, move, grid))
-        if best_size is None or new_size < best_size:
-            best_size = new_size
-            best_moves = [move]
-        elif new_size == best_size:
-            best_moves.append(move)
-    return random.choice(best_moves)
-
-# Tu implemenujemyh zwyczajnego BFSa
-def solution(start_positions: Set[Tuple[int, int]], goal_positions: Set[Tuple[int, int]], grid: List[List[int]]) -> Optional[str]:
-    path = ""
-    # Robienie ruchów zmniejszających niepewność
-    while len(start_positions) > UNCERTAINTY:
-        move = best_move(start_positions, grid)
-        path += move
-        start_positions = apply_move(start_positions, move, grid)
+from itertools import product, permutations
+import os
+import sys
 
 
+DIRS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+DIR_CHARS = "UDLR"
+DIR_INDEX = {c: i for i, c in enumerate(DIR_CHARS)}
 
-    # Zwykłe rozwiązanie BFS, które sprawdza wszystkie możliwe ruchy i dodaje je do kolejki, jeśli są ważne
-    queue = deque([(start_positions, path)])  # (current positions, path)
-    visited = set()
-    visited.add(frozenset(start_positions))
 
-    while queue:
-        current_positions, path = queue.popleft()
+def iter_bits(mask: int):
+    while mask:
+        lsb = mask & -mask
+        yield lsb.bit_length() - 1
+        mask ^= lsb
 
-        if len(current_positions.difference(goal_positions)) == 0:
-            return path  # Found a valid path
 
-        for move in MOVES:
-            new_positions = set()
-            for pos in current_positions:
-                new_pos = (pos[0] + MOVES[move][0], pos[1] + MOVES[move][1])
-                if is_valid_move(grid, new_pos):
-                    new_positions.add(new_pos)
+def popcount(x: int) -> int:
+    return x.bit_count()
+
+
+def read_input():
+    if os.path.exists("zad_input.txt"):
+        with open("zad_input.txt", "r", encoding="utf-8") as f:
+            data = f.read().splitlines()
+    else:
+        data = sys.stdin.read().splitlines()
+    while data and data[-1] == "":
+        data.pop()
+    return data
+
+
+def write_output(ans: str):
+    if os.path.exists("zad_input.txt") or not sys.stdout.isatty():
+        try:
+            with open("zad_output.txt", "w", encoding="utf-8") as f:
+                f.write(ans + "\n")
+            return
+        except Exception:
+            pass
+    sys.stdout.write(ans + "\n")
+
+
+class Solver:
+    def __init__(self, lines):
+        self.grid = lines
+        self.h = len(lines)
+        self.w = len(lines[0]) if self.h else 0
+
+        self.pos_to_id = {}
+        self.id_to_pos = []
+        self.starts = []
+        self.goals = []
+
+        for r in range(self.h):
+            for c in range(self.w):
+                ch = self.grid[r][c]
+                if ch != '#':
+                    idx = len(self.id_to_pos)
+                    self.pos_to_id[(r, c)] = idx
+                    self.id_to_pos.append((r, c))
+
+        self.n = len(self.id_to_pos)
+
+        for idx, (r, c) in enumerate(self.id_to_pos):
+            ch = self.grid[r][c]
+            if ch in ('S', 'B'):
+                self.starts.append(idx)
+            if ch in ('G', 'B'):
+                self.goals.append(idx)
+
+        self.start_mask = 0
+        for s in self.starts:
+            self.start_mask |= 1 << s
+
+        self.goal_mask = 0
+        for g in self.goals:
+            self.goal_mask |= 1 << g
+
+        self.next_pos = [[0] * self.n for _ in range(4)]
+        for idx, (r, c) in enumerate(self.id_to_pos):
+            for d, (dr, dc) in enumerate(DIRS):
+                nr, nc = r + dr, c + dc
+                if (nr, nc) in self.pos_to_id:
+                    self.next_pos[d][idx] = self.pos_to_id[(nr, nc)]
                 else:
-                    new_positions.add(pos)  # If move is invalid, stay in place
-            
-            new_positions_frozen = frozenset(new_positions)
-            if new_positions_frozen not in visited:
-                visited.add(new_positions_frozen)
-                queue.append((new_positions_frozen, path + move))
+                    self.next_pos[d][idx] = idx
 
-    return None  # No valid path found
+        self.dist_to_goal = self._compute_goal_dist()
+        self.trans_cache = [dict() for _ in range(4)]
 
+        self.short_sequences = self._build_short_sequences()
+        self.macro_sequences = self._build_macro_sequences()
+
+    def _compute_goal_dist(self):
+        INF = 10**9
+        dist = [INF] * self.n
+        q = deque()
+
+        for g in self.goals:
+            dist[g] = 0
+            q.append(g)
+
+        while q:
+            v = q.popleft()
+            vr, vc = self.id_to_pos[v]
+            for dr, dc in DIRS:
+                nr, nc = vr + dr, vc + dc
+                if (nr, nc) in self.pos_to_id:
+                    u = self.pos_to_id[(nr, nc)]
+                    if dist[u] == INF:
+                        dist[u] = dist[v] + 1
+                        q.append(u)
+        return dist
+
+    def _build_short_sequences(self):
+        seqs = []
+        for length in (1, 2, 3):
+            for tup in product(range(4), repeat=length):
+                seqs.append(tup)
+        return seqs
+
+    def _build_macro_sequences(self):
+        reps = {
+            0: self.h,  # U
+            1: self.h,  # D
+            2: self.w,  # L
+            3: self.w,  # R
+        }
+
+        seqs = []
+
+        for d in range(4):
+            seqs.append(tuple([d] * reps[d]))
+
+        for perm in permutations(range(4)):
+            seq = []
+            for d in perm:
+                seq.extend([d] * reps[d])
+            seqs.append(tuple(seq))
+
+        seen = set()
+        uniq = []
+        for s in seqs:
+            if s not in seen:
+                seen.add(s)
+                uniq.append(s)
+        return uniq
+
+    def is_goal_state(self, mask: int) -> bool:
+        return (mask & ~self.goal_mask) == 0
+
+    def move_once(self, mask: int, d: int) -> int:
+        cached = self.trans_cache[d].get(mask)
+        if cached is not None:
+            return cached
+
+        nxt = 0
+        trans = self.next_pos[d]
+        for i in iter_bits(mask):
+            nxt |= 1 << trans[i]
+
+        self.trans_cache[d][mask] = nxt
+        return nxt
+
+    def apply_seq(self, mask: int, seq) -> int:
+        for d in seq:
+            mask = self.move_once(mask, d)
+        return mask
+
+    def score_mask(self, mask: int):
+        cnt = popcount(mask)
+        s = 0
+        mx = 0
+        for i in iter_bits(mask):
+            d = self.dist_to_goal[i]
+            s += d
+            if d > mx:
+                mx = d
+        return (cnt, s, mx)
+
+    def bounded_bfs(self, start_mask: int, max_depth: int, node_limit: int):
+        if self.is_goal_state(start_mask):
+            return ""
+
+        q = deque()
+        q.append(start_mask)
+
+        parent = {start_mask: (-1, -1)}
+        depth = {start_mask: 0}
+
+        visited_nodes = 1
+
+        while q:
+            state = q.popleft()
+            dep = depth[state]
+            if dep >= max_depth:
+                continue
+
+            for d in range(4):
+                nxt = self.move_once(state, d)
+                if nxt in parent:
+                    continue
+                parent[nxt] = (state, d)
+                nd = dep + 1
+                depth[nxt] = nd
+
+                if self.is_goal_state(nxt):
+                    path = []
+                    cur = nxt
+                    while parent[cur][0] != -1:
+                        prev, move = parent[cur]
+                        path.append(DIR_CHARS[move])
+                        cur = prev
+                    path.reverse()
+                    return "".join(path)
+
+                q.append(nxt)
+                visited_nodes += 1
+                if visited_nodes >= node_limit:
+                    return None
+
+        return None
+
+    def choose_best_reduction(self, mask: int, remaining_budget: int):
+        best_seq = None
+        best_mask = None
+        best_score = self.score_mask(mask)
+
+        # Najpierw mocne makroruchy
+        for seq in self.macro_sequences:
+            if len(seq) > remaining_budget:
+                continue
+            nxt = self.apply_seq(mask, seq)
+            sc = self.score_mask(nxt)
+            if sc < best_score:
+                best_score = sc
+                best_seq = seq
+                best_mask = nxt
+
+        # Potem lokalne zachłanne sekwencje
+        for seq in self.short_sequences:
+            if len(seq) > remaining_budget:
+                continue
+            nxt = self.apply_seq(mask, seq)
+            sc = self.score_mask(nxt)
+            if sc < best_score:
+                best_score = sc
+                best_seq = seq
+                best_mask = nxt
+
+        return best_seq, best_mask, best_score
+
+    def solve(self):
+        if self.is_goal_state(self.start_mask):
+            return ""
+
+        current = self.start_mask
+        answer = []
+
+        MAX_LEN = 150
+        PHASE1_LIMIT = 130
+        BFS_THRESHOLD = 2 # Z testów dla 3 działa
+
+        # Spróbuj od razu BFS, jeśli stan jest mały
+        if popcount(current) <= BFS_THRESHOLD:
+            path = self.bounded_bfs(current, MAX_LEN, 250000)
+            if path is not None and len(path) <= MAX_LEN:
+                return path
+
+        # Faza 1 - redukcja niepewności
+        improved = True
+        while improved and len(answer) < PHASE1_LIMIT:
+            improved = False
+
+            remaining_total = MAX_LEN - len(answer)
+
+            # Jeśli stan już mały, próbujemy BFS
+            if popcount(current) <= BFS_THRESHOLD:
+                path = self.bounded_bfs(current, remaining_total, 300000)
+                if path is not None and len(answer) + len(path) <= MAX_LEN:
+                    return "".join(answer) + path
+
+            # Szukamy najlepszej redukcji
+            seq, nxt, sc = self.choose_best_reduction(
+                current,
+                min(remaining_total, PHASE1_LIMIT - len(answer))
+            )
+
+            if seq is not None and nxt != current:
+                for d in seq:
+                    answer.append(DIR_CHARS[d])
+                current = nxt
+                improved = True
+
+                if self.is_goal_state(current):
+                    return "".join(answer)
+
+        # Po redukcji próbujemy BFS kilkoma progami
+        remaining_total = MAX_LEN - len(answer)
+
+        for limit, threshold in [
+            (120000, 20),
+            (250000, 24),
+            (500000, 28),
+            (800000, 40),
+        ]:
+            if popcount(current) <= threshold:
+                path = self.bounded_bfs(current, remaining_total, limit)
+                if path is not None and len(answer) + len(path) <= MAX_LEN:
+                    return "".join(answer) + path
+
+        # Awaryjnie: jeszcze kilka lokalnych ruchów zachłannych,
+        # jednocześnie co chwilę próbując BFS
+        # while len(answer) < MAX_LEN:
+        #     remaining_total = MAX_LEN - len(answer)
+
+        #     path = self.bounded_bfs(current, remaining_total, 300000)
+        #     if path is not None and len(answer) + len(path) <= MAX_LEN:
+        #         return "".join(answer) + path
+
+        #     best_seq = None
+        #     best_mask = None
+        #     best_score = self.score_mask(current)
+
+        #     for seq in self.short_sequences:
+        #         if len(seq) > remaining_total:
+        #             continue
+        #         nxt = self.apply_seq(current, seq)
+        #         sc = self.score_mask(nxt)
+        #         if sc < best_score:
+        #             best_score = sc
+        #             best_seq = seq
+        #             best_mask = nxt
+
+        #     if best_seq is None or best_mask == current:
+        #         break
+
+        #     for d in best_seq:
+        #         answer.append(DIR_CHARS[d])
+        #     current = best_mask
+
+        #     if self.is_goal_state(current):
+        #         return "".join(answer)
+
+        # # Ostatnia próba BFS
+        # remaining_total = MAX_LEN - len(answer)
+        # path = self.bounded_bfs(current, remaining_total, 1000000)
+        # if path is not None and len(answer) + len(path) <= MAX_LEN:
+        #     return "".join(answer) + path
+
+        # # W praktyce dla sensownych testów nie powinno tu dojść.
+        # # Gdyby jednak doszło, zwracamy to, co mamy.
+        # return "".join(answer[:MAX_LEN])
 
 
 def main():
-    veteran_positions, goal_positions, grid = read_input()
-    # print("Start positions:", veteran_positions)
-    # print("Goal positions:", goal_positions)
-    # print("Grid:")
-    # for row in grid:
-    #     print(row)
+    lines = read_input()
+    solver = Solver(lines)
+    ans = solver.solve()
+    write_output(ans)
 
-    # print_grid(grid, {(3, 1)}, goal_positions)
-
-    # Tutaj należy zaimplementować algorytm A* lub inny algorytm poszukiwania ścieżki
-    # i znaleźć najkrótszą ścieżkę z dowolnego startowego punktu do dowolnego punktu docelowego.
-    # Następnie należy zapisać wynik w OUTPUT_FILE.
-    # Poniżej znajduje się przykładowa ścieżka, którą można zastąpić rzeczywistym wynikiem algorytmu.
-
-    result = solution(veteran_positions, goal_positions, grid)
-    if result:
-        print("Found path:", result)
-        write_output(result)
-    else:
-        print("No path found.")
 
 if __name__ == "__main__":
-    main() 
+    main()
