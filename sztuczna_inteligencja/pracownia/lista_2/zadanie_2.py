@@ -261,7 +261,7 @@ class Solver:
 
         MAX_LEN = 150
         PHASE1_LIMIT = 130
-        BFS_THRESHOLD = 2 # Z testów dla 3 działa
+        BFS_THRESHOLD = 4 # Z testów dla 3 działa
 
         # Spróbuj od razu BFS, jeśli stan jest mały
         if popcount(current) <= BFS_THRESHOLD:
