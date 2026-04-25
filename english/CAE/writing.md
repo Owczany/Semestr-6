@@ -5,6 +5,18 @@
 
 ### Introduction
 <!-- Introduction -->
+Nowadays people spend more time surrfing the internet, scrolling through social media, blindly staring at the various sizes of screens and gets overstimulated easly. In addition, we are getting more stress at work thus AI is meant to support humans at their jobs. That's why, I have attendent a discussion group about how to reduce stress with my class. We found out some worth spreading information about reducing stress.
+
+<!-- First point (doing exercise) -->
+First of all, at the class we've been informed that regular exercise can decrease average level of cortisol, which is responisble for causing stress, by 40 percent. It's marvelous information but even that many people doesn't do any type of sports. Can greatly reduce 
+
+<!-- Second point (organising time effectively) -->
+
+
+<!-- Conclusion -->
+To sum things up, just doing exercise can be extrodinary for our mental health, but keeping the balance between organising time effectively with sports is the golden point. Can be a greate mix to be the 
+
+<!-- Introduction -->
 Nowadays a lot of people struggle with paralyzing stress. People are tend to learn about different (cases) how to conquere this negative feeling.
 
 <!-- First point -->
