@@ -5,6 +5,9 @@ A group of other boys were
 inexplicable = unexplainable
 food banks
 
+lentil
+parsley
+
 page 150
 
 ## exercise 2
