@@ -1,42 +1,20 @@
-## Writing
+<div align="center">
+
+# Writing
+
+</div>
 
 
 ### Essay **opinion**
 
-### Introduction
 <!-- Introduction -->
-Nowadays people spend more time surrfing the internet, scrolling through social media, blindly staring at the various sizes of screens and gets overstimulated easly. In addition, we are getting more stress at work thus AI is meant to support humans at their jobs. That's why, I have attendent a discussion group about how to reduce stress with my class. We found out some worth spreading information about reducing stress.
+Nowadays more and more people spend more time surfing the internet, doomscrolling through social media, blindly staring at the various sizes of screens and getting overstimulated easly. In addition, we are getting more stress at work thus AI is/was meant to support humans at their jobs. That's why, I have attended a discussion group about how to reduce stress with my class. We found out some worth spreading information about reducing stress.
 
 <!-- First point (doing exercise) -->
-First of all, at the class we've been informed that regular exercise can decrease average level of cortisol, which is responisble for causing stress, by 40 percent. It's marvelous information but even that many people doesn't do any type of sports. Can greatly reduce 
+First of all, everyone knows regular exercise is essential for our physical health. It has a possitive effect on our stamina and immunity system. Far less people know that despite physical benefits regular exercise decreases average level of cortisol, which is responsible for causing stress, by 40 percent. It's marvelous information but still many people don't do any type of sports.
 
 <!-- Second point (organising time effectively) -->
-
-
-<!-- Conclusion -->
-To sum things up, just doing exercise can be extrodinary for our mental health, but keeping the balance between organising time effectively with sports is the golden point. Can be a greate mix to be the 
-
-<!-- Introduction -->
-Nowadays a lot of people struggle with paralyzing stress. People are tend to learn about different (cases) how to conquere this negative feeling.
-
-<!-- First point -->
-
-
-<!-- Second point -->
-
+Organising time effectively is one of the most underrated methods that are worth mentionining. Meanwhile doing sports requires some level of mobility and flexibilty to start doing it. Time organization is always an option for everyone. Time management is crucial in terms of reducing stress. It helps us to do more chores in shorter periods of time which results in more free time for ourselves.
 
 <!-- Conclusion -->
-
-
-
-Recently I've attended class where we discussed various techniuqes how to reduce stress. They focused on 2 main solutions to this issue. Doing exercise and organising time effecitvely were mentioned as core solution. In my opinion doing exercise has better outcome than the other method.
-
-First of all, exercising is recommended to stay fit, and help your neural system stimulated. 
-
-
-I've to write more text in english. I have to start stimulating my brain in various possible ways as also differenet languages. I guess it's good for my mental health? The funny and  tricky thing is that I would like to have everything on 100 percent correct. I am enjoyer of one-shoting everything. Like be good at everything imendiatly. That's kind of crazy but I need to slow down my horses and take a big breath. And stop for a moment.
-
-It's crazy for me still that Julka is writing her texts in english all the time to express her feelings. She said that is easier way for her to express and send the feelings out. 
-
-### Report
-
+To sum things up, doing exercise can be extrodinary for our physical and mental health, but keeping the balance between organising time effectively with sports is the golden middle. It's always easier to start doing sports when we are confident to have also time for additional workout.
