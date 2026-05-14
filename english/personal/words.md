@@ -17,4 +17,6 @@ extrinsic - uboczny
 
 
 
+### FEELINGS
 
+### 
