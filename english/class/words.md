@@ -38,3 +38,9 @@ According to the blog, he referes to show called Master Chef. At first he was ve
 
 The last show that was mentioned is "Ratatouille". He provides and example of his family tradishion. He points out that he before watching the movie/film. 
 
+czasownik po czasowniku
+bezokolicznik
+
+
+imposed - nałozony, narzucony
+
