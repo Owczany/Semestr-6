@@ -4,6 +4,7 @@
 
 </div>
 
+! Poprawić 
 
 ### Essay **opinion**
 
@@ -24,4 +25,26 @@ To sum things up, doing exercise can be extrodinary for our physical and mental 
 ---
 
 ### Essay **opinion**
+
+These days a lot of countires measure even the level of happiness. It's a fact that people living in richer countires are commonly happier that people from other countries. I've watched the TV discussion about how rich areas should help poorer countries. I've learnt the ways of support that can be effective and make a world better place.
+
+First of all, sending and lending money to poorer countries was suggested as a way of supporting them. It is known that sending or lending money is the simplest and the fastest way to help others but there are many drawbacks of this solution. Giving others the resource that is cabale of fixing almost "everything" in terms of economics and goverment but there is a tricky catch. Countries which are given that kind of help must be responsible and not corrupted in order to improve their situation. In many cases it is impossible. It's often why they are poorer than first world countries in a first place.
+
+In a fact health care is always bonded/linked with higher standards of living in general. That's why another solution includes support in this area. Giving third world countires medicines that are neccesry such as painkillers, vaccines and antibiotics can drasticlly help them improve life standards. 
+
+To sum things up, being supportive to other countries and trying to solve world global problems isn't an easy task. Giving them money theoritcaly is an option but doing it recklessly leads to waste of money. In the other hand, health care support is never going to be a wrong choice. 
+
+### Essay **opinion**
+
+
+
+
+### Report
+
+### Report on the four-day school trip
+
+
+### Introduction
+
+The purpose of this report is to give a brief overview of the experience I gained from the  four-day school trip to Spain. 
 
