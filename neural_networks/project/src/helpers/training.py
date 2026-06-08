@@ -1,5 +1,7 @@
 from collections.abc import Callable
+from pathlib import Path
 
+import pandas as pd
 import torch
 
 
@@ -84,3 +86,78 @@ def train_model(
             )
 
     return history
+
+
+def save_model_checkpoint(
+    model,
+    experiment,
+    output_dir,
+    history=None,
+    extra_metadata=None,
+):
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    checkpoint_path = output_path / f"{experiment.name}.pt"
+    metadata = {
+        "experiment_name": experiment.name,
+        "model": experiment.model.__dict__,
+        "optimizer": experiment.optimizer.__dict__,
+        "dataset": experiment.dataset.__dict__,
+        "epochs": experiment.epochs,
+        "seed": experiment.seed,
+        "device": experiment.device,
+    }
+    if history is not None:
+        metadata["history"] = history
+    if extra_metadata:
+        metadata.update(extra_metadata)
+
+    torch.save(
+        {
+            "model_state_dict": model.state_dict(),
+            "metadata": metadata,
+        },
+        checkpoint_path,
+    )
+    return checkpoint_path
+
+
+def history_to_rows(experiment, history):
+    rows = []
+    for index, (train_loss, val_loss, train_acc, val_acc) in enumerate(
+        zip(
+            history["train_loss"],
+            history["val_loss"],
+            history["train_acc"],
+            history["val_acc"],
+        ),
+        start=1,
+    ):
+        rows.append(
+            {
+                "name": experiment.name,
+                "model": experiment.model.name,
+                "epoch": index,
+                "train_loss": train_loss,
+                "val_loss": val_loss,
+                "train_acc": train_acc,
+                "val_acc": val_acc,
+                "optimizer": experiment.optimizer.name,
+                "learning_rate": experiment.optimizer.learning_rate,
+                "momentum": experiment.optimizer.momentum,
+                "weight_decay": experiment.optimizer.weight_decay,
+            }
+        )
+    return rows
+
+
+def save_training_tables(results, history_rows, results_csv, history_csv):
+    results_path = Path(results_csv)
+    history_path = Path(history_csv)
+    results_path.parent.mkdir(parents=True, exist_ok=True)
+    history_path.parent.mkdir(parents=True, exist_ok=True)
+
+    pd.DataFrame(results).to_csv(results_path, index=False)
+    pd.DataFrame(history_rows).to_csv(history_path, index=False)
+    return results_path, history_path

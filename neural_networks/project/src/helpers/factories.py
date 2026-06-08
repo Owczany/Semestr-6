@@ -1,11 +1,12 @@
 import random
+from pathlib import Path
 
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
 from src.datasets import SignLanguageMNIST
-from src.models import CNN, MLP
+from src.models import CNN, LeNet, MLP
 
 
 def set_seed(seed: int):
@@ -26,9 +27,15 @@ def resolve_device(device: str):
     return "cpu"
 
 
-def make_data_loaders(dataset_config):
-    train_dataset = SignLanguageMNIST(dataset_config.train_csv)
-    test_dataset = SignLanguageMNIST(dataset_config.test_csv)
+def make_data_loaders(dataset_config, root_dir=None):
+    train_csv = dataset_config.train_csv
+    test_csv = dataset_config.test_csv
+    if root_dir is not None:
+        train_csv = Path(root_dir) / train_csv
+        test_csv = Path(root_dir) / test_csv
+
+    train_dataset = SignLanguageMNIST(train_csv)
+    test_dataset = SignLanguageMNIST(test_csv)
 
     train_loader = DataLoader(
         train_dataset,
@@ -54,6 +61,8 @@ def build_model(model_config):
         )
     if model_config.name == "cnn":
         return CNN(num_classes=model_config.num_classes, dropout=model_config.dropout)
+    if model_config.name == "lenet":
+        return LeNet(num_classes=model_config.num_classes)
     raise ValueError(f"Unsupported model: {model_config.name}")
 
 

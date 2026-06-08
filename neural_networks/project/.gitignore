@@ -24,6 +24,7 @@ dist/
 # Project data and downloaded archives
 data/
 sign-language-mnist.zip
+artifacts/
 
 # OS/editor files
 .DS_Store

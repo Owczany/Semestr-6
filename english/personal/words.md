@@ -1,5 +1,9 @@
 
 
+perturbations
+deteriorates
+
+
 # 
 
 to be in one's infancy - być w powijakach

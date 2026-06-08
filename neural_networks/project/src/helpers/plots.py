@@ -1,11 +1,11 @@
-import math
-
 import numpy as np
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
 MODERN_TEMPLATE = "plotly_white"
+PLOT_FONT = "Segoe UI, Arial, Helvetica, sans-serif"
 PRIMARY_COLOR = "#2563eb"
 SECONDARY_COLOR = "#0f766e"
 ACCENT_COLOR = "#7c3aed"
@@ -23,7 +23,7 @@ def _apply_modern_layout(fig, title, height=420):
         title={"text": title, "x": 0.02, "xanchor": "left"},
         height=height,
         margin=dict(l=48, r=24, t=72, b=48),
-        font=dict(family="Inter, Arial, sans-serif", size=13, color="#111827"),
+        font=dict(family=PLOT_FONT, size=14, color="#111827"),
         legend=dict(
             orientation="h",
             yanchor="bottom",
@@ -68,54 +68,69 @@ def plot_class_distribution(df, label_column="label", title="Class distribution"
     _apply_modern_layout(fig, title)
     fig.update_xaxes(title_text="Class")
     fig.update_yaxes(title_text="Number of images")
-    fig.show()
     return fig
 
 
 def plot_label_samples(
     df,
-    samples_per_class=5,
+    samples_per_class=3,
     label_column="label",
     title="Examples from each class",
 ):
     classes = sorted(df[label_column].unique())
-    fig = make_subplots(
-        rows=len(classes),
-        cols=samples_per_class,
-        vertical_spacing=0.003,
-        horizontal_spacing=0.003,
+    fig, axes = plt.subplots(
+        len(classes),
+        samples_per_class,
+        figsize=(samples_per_class * 1.8, len(classes) * 1.45),
+        squeeze=False,
     )
 
-    for row, label in enumerate(classes, start=1):
+    for row, label in enumerate(classes):
         samples = df[df[label_column] == label].iloc[:samples_per_class]
-        for col in range(1, samples_per_class + 1):
-            pixels = samples.iloc[col - 1, 1:].values.reshape(28, 28).astype(np.uint8)
-            fig.add_trace(
-                go.Heatmap(
-                    z=pixels,
-                    colorscale="gray",
-                    showscale=False,
-                    hoverinfo="skip",
-                ),
-                row=row,
-                col=col,
+        for col in range(samples_per_class):
+            ax = axes[row, col]
+            if col >= len(samples):
+                ax.axis("off")
+                continue
+
+            pixels = samples.iloc[col, 1:].values.reshape(28, 28).astype(np.uint8)
+
+            ax.imshow(
+                pixels,
+                cmap="gray",
+                interpolation="nearest",
+                aspect="equal",
             )
-            fig.update_xaxes(visible=False, row=row, col=col)
-            fig.update_yaxes(visible=False, autorange="reversed", row=row, col=col)
+            ax.set_box_aspect(1)
+            ax.set_xticks([])
+            ax.set_yticks([])
 
-        fig.add_annotation(
-            text=_label_to_letter(label),
-            xref="paper",
-            yref="paper",
-            x=-0.015,
-            y=1 - ((row - 0.5) / len(classes)),
-            showarrow=False,
-            font=dict(size=12, color=MUTED_COLOR),
-        )
+            for spine in ax.spines.values():
+                spine.set_visible(False)
 
-    _apply_modern_layout(fig, title, height=max(900, math.ceil(len(classes) * 52)))
-    fig.update_layout(showlegend=False, margin=dict(l=64, r=24, t=72, b=24))
-    fig.show()
+            if col == 0:
+                ax.set_ylabel(
+                    _label_to_letter(label),
+                    rotation=0,
+                    labelpad=18,
+                    va="center",
+                    ha="right",
+                    fontsize=12,
+                    color=MUTED_COLOR,
+                    fontfamily="Arial",
+                )
+
+    fig.suptitle(title, fontsize=16, fontfamily="Arial", color="#111827", y=0.995)
+    fig.patch.set_facecolor("white")
+    fig.subplots_adjust(
+        left=0.12,
+        right=0.98,
+        top=0.97,
+        bottom=0.01,
+        wspace=0.08,
+        hspace=0.08,
+    )
+    plt.close(fig)
     return fig
 
 
@@ -181,7 +196,6 @@ def plot_training_history(history, title):
     fig.update_xaxes(title_text="Epoch", dtick=1)
     fig.update_yaxes(title_text="Loss", row=1, col=1)
     fig.update_yaxes(title_text="Accuracy", range=[0, 1], row=1, col=2)
-    fig.show()
     return fig
 
 
@@ -190,27 +204,31 @@ def plot_experiment_comparison(
     metric="best_val_acc",
     title="Experiment comparison",
 ):
+    hover_df = results_df.copy()
+    if "model" not in hover_df.columns:
+        hover_df["model"] = ""
+
     fig = go.Figure(
         go.Bar(
             x=results_df["name"],
             y=results_df[metric],
             marker_color=PRIMARY_COLOR,
             marker_line_width=0,
-            customdata=results_df[
-                ["optimizer", "learning_rate", "momentum", "best_epoch"]
+            customdata=hover_df[
+                ["model", "optimizer", "learning_rate", "momentum", "best_epoch"]
             ].to_numpy(),
             hovertemplate=(
                 "%{x}<br>"
                 "Best val acc: %{y:.4f}<br>"
-                "Optimizer: %{customdata[0]}<br>"
-                "LR: %{customdata[1]}<br>"
-                "Momentum: %{customdata[2]}<br>"
-                "Best epoch: %{customdata[3]}<extra></extra>"
+                "Model: %{customdata[0]}<br>"
+                "Optimizer: %{customdata[1]}<br>"
+                "LR: %{customdata[2]}<br>"
+                "Momentum: %{customdata[3]}<br>"
+                "Best epoch: %{customdata[4]}<extra></extra>"
             ),
         )
     )
     _apply_modern_layout(fig, title)
     fig.update_xaxes(title_text="Experiment")
     fig.update_yaxes(title_text=metric, range=[0, 1])
-    fig.show()
     return fig

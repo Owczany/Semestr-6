@@ -15,7 +15,7 @@ class DatasetConfig:
 
 @dataclass(frozen=True)
 class ModelConfig:
-    name: Literal["mlp", "cnn"]
+    name: Literal["mlp", "cnn", "lenet"]
     input_size: int = 28 * 28
     hidden_size: int = 256
     num_classes: int = 24
