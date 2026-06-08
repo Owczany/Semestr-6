@@ -1,2 +1,31 @@
-data
+# Python environments
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Project data and downloaded archives
+data/
 sign-language-mnist.zip
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Literal
 
+from configs.constants import DEFAULT_SEED
+
 
 @dataclass(frozen=True)
 class DatasetConfig:
@@ -22,9 +24,10 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class OptimizerConfig:
-    name: Literal["adam"] = "adam"
+    name: Literal["adam", "sgd"] = "adam"
     learning_rate: float = 1e-3
     weight_decay: float = 0.0
+    momentum: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -34,5 +37,5 @@ class ExperimentConfig:
     model: ModelConfig
     optimizer: OptimizerConfig
     epochs: int
-    seed: int = 42
+    seed: int = DEFAULT_SEED
     device: Literal["auto", "cpu", "cuda", "mps"] = "auto"

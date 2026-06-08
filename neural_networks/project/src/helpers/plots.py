@@ -183,3 +183,34 @@ def plot_training_history(history, title):
     fig.update_yaxes(title_text="Accuracy", range=[0, 1], row=1, col=2)
     fig.show()
     return fig
+
+
+def plot_experiment_comparison(
+    results_df,
+    metric="best_val_acc",
+    title="Experiment comparison",
+):
+    fig = go.Figure(
+        go.Bar(
+            x=results_df["name"],
+            y=results_df[metric],
+            marker_color=PRIMARY_COLOR,
+            marker_line_width=0,
+            customdata=results_df[
+                ["optimizer", "learning_rate", "momentum", "best_epoch"]
+            ].to_numpy(),
+            hovertemplate=(
+                "%{x}<br>"
+                "Best val acc: %{y:.4f}<br>"
+                "Optimizer: %{customdata[0]}<br>"
+                "LR: %{customdata[1]}<br>"
+                "Momentum: %{customdata[2]}<br>"
+                "Best epoch: %{customdata[3]}<extra></extra>"
+            ),
+        )
+    )
+    _apply_modern_layout(fig, title)
+    fig.update_xaxes(title_text="Experiment")
+    fig.update_yaxes(title_text=metric, range=[0, 1])
+    fig.show()
+    return fig

@@ -2,7 +2,7 @@ import torch.nn as nn
 
 
 class CNN(nn.Module):
-    def __init__(self, num_classes=24):
+    def __init__(self, num_classes=24, dropout=0.5):
         super().__init__()
 
         self.features = nn.Sequential(
@@ -27,7 +27,7 @@ class CNN(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Flatten(),           # 128*3*3 = 1152
-            nn.Dropout(0.5),
+            nn.Dropout(dropout),
             nn.Linear(128 * 3 * 3, 256),
             nn.ReLU(),
             nn.Linear(256, num_classes),
