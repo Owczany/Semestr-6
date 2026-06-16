@@ -1,0 +1,1 @@
+Wszystkie textury są zrobione własnoręcznie
